@@ -29,22 +29,25 @@ class Coalesce:
 
     def on_get(self, req, resp):
         """Get handler for ping endpoint"""
+        try:
+            collection_data = [self.call_member_api(self.API1), self.call_member_api(self.API2),
+                               self.call_member_api(self.API3)]
 
-        collection_data = [self.call_member_api(self.API1), self.call_member_api(self.API2),
-                           self.call_member_api(self.API3)]
+            deductible = 0
+            stop_loss = 0
+            oop_max = 0
+            items = len(collection_data)
+            for data in collection_data:
+                deductible += data.deductible
+                stop_loss += data.stop_loss
+                oop_max += data.oop_max
 
-        deductible = 0
-        stop_loss = 0
-        oop_max = 0
-        items = len(collection_data)
-        for data in collection_data:
-            deductible += data.deductible
-            stop_loss += data.stop_loss
-            oop_max += data.oop_max
-
-        resp.media = {
-            "deductible": math.trunc(deductible / items),
-            "stop_loss": math.trunc(stop_loss / items),
-            "oop_max": math.trunc(oop_max / items),
-        }
-        resp.status = falcon.HTTP_200
+            resp.media = {
+                "deductible": math.trunc(deductible / items),
+                "stop_loss": math.trunc(stop_loss / items),
+                "oop_max": math.trunc(oop_max / items),
+            }
+            resp.status = falcon.HTTP_200
+        except Exception:
+            # Normally you would also log the error.
+            raise falcon.HTTPInternalServerError()

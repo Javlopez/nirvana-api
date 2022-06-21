@@ -18,4 +18,3 @@ mock_api_handler = MockApi()
 app.add_route('/api1/v1/', mock_api_handler)
 app.add_route('/api2/v1/', mock_api_handler)
 app.add_route('/api3/v1/', mock_api_handler)
-
